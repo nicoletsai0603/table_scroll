@@ -1,0 +1,370 @@
+﻿var SweetAlert = {
+    /**
+     * SweetAlert alert格式
+     * @param {any} msg 需顯示訊息
+     */
+    SwalAlert: function (msg, fun = null) {
+        let swalSet = {
+            title: "提示",
+            html: msg,
+            confirmButtonText: "確定",
+        };
+        swal.fire(swalSet).then((result) => {
+            if (fun != null) {
+                fun();
+            }
+        });
+    },
+    /**
+     * SweetAlert confirm格式
+     * @param {any} msg 需顯示訊息
+     * @param {any} fun 確認後呼叫function
+     */
+    SwalConfirm: function (msg, fun) {
+        let swalSet = {
+            title: "提示",
+            html: msg,
+            confirmButtonText: "確定",
+            cancelButtonText: "取消",
+            showCancelButton: true,
+        };
+        swal.fire(swalSet).then((result) => {
+            if (result.isConfirmed) {
+                fun();
+            }
+        });
+    },
+    /**
+     * SweetAlert confirm格式 for申請單用
+     * @param {any} fun 確認後呼叫function
+     */
+    SwalConfirmApply: function (fun) {
+        let swalSetApply = {
+            title: "",
+            html: "是否要選擇其他類別及種類之申請",
+            confirmButtonText: "是",
+            cancelButtonText: "否,下一步",
+        };
+        swalSetApply.showCancelButton = true;
+        swal.fire(swalSetApply).then((result) => {
+            if (!result.isConfirmed) {
+                fun();
+            } else {
+                $('html,body').animate({ // 有些瀏覽器只支援html，有些只支援body 所以兩個都寫進去
+                    scrollTop: 0,
+                }, 700)
+            }
+        });
+    },
+    /**
+     * SweetAlert confirm格式 人員異動使用
+     * @param {any} fun 確認後呼叫function
+     */
+    SwalConfirmPersonnelApply: function (fun) {
+        let swalSetApply = {
+            title: "",
+            html: "是否有變更資料尚未儲存?",
+            confirmButtonText: "是",
+            cancelButtonText: "否,下一步",
+        };
+        swalSetApply.showCancelButton = true;
+        swal.fire(swalSetApply).then((result) => {
+            if (!result.isConfirmed) {
+                fun();
+            }
+        });
+    },
+    /**
+     * SweetAlert confirm格式
+     * @param {any} msg 需顯示訊息
+     * @param {any} fun1 確定後呼叫function
+     * @param {any} fun2 取消後呼叫function
+     */
+    SwalConfirm2Fun: function (msg, fun1, fun2) {
+        let swalSet = {
+            title: "提示",
+            html: msg,
+            confirmButtonText: "確定",
+            cancelButtonText: "取消",
+            showCancelButton: true,
+        };
+        swal.fire(swalSet).then((result) => {
+            if (result.isConfirmed) {
+                fun1();
+            } else {
+                fun2();
+            }
+        });
+    },
+    /**
+     * SweetAlert標準方法暫緩輸入格式
+     * @param {any} projectNo 顯示案件號
+     * @param {any} fun 確定後呼叫function
+     */
+    SwalStandardMethodSuspend: function (projectNo, fun) {
+        let swalSet = {
+            title: '※暫緩原因必填，需描述暫緩原因、於哪個程序決議暫緩',
+            text: '填寫範例：因研商會議研議後，決議待oooo單位召開相關研商會後再啟動，故於研商會議後決議暫緩',
+            input: 'text',
+            inputPlaceholder: '請輸入備註',
+            showCancelButton: true,
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+        };
+        swal.fire(swalSet).then((result) => {
+            if (result.isConfirmed) {
+                fun(result);
+            }
+        });
+    },
+    /**
+     * SweetAlert標準方法主管退回輸入格式
+     * @param {any} fun 確定後呼叫function
+     */
+    SwalStandardMethodReject: function (fun) {
+        let swalSet = {
+            title: '※請輸入退回意見',
+            text: '',
+            input: 'text',
+            inputPlaceholder: '請輸入意見',
+            showCancelButton: true,
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+        };
+        swal.fire(swalSet).then((result) => {
+            if (result.isConfirmed) {
+                fun(result);
+            }
+        });
+    },
+    /**
+     * SweetAlert標準方法主管補件說明輸入格式
+     * @param {any} fun 確定後呼叫function
+     */
+    SwalStandardMethodSupplement: function (fun) {
+        let swalSet = {
+            title: '※請輸入補件說明',
+            text: '',
+            input: 'text',
+            inputPlaceholder: '請輸入說明',
+            showCancelButton: true,
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+        };
+        swal.fire(swalSet).then((result) => {
+            if (result.isConfirmed) {
+                fun(result);
+            }
+        });
+    },
+}
+
+// 共用元件
+var Helper = {
+    /**
+     * 共用Ajax
+     * @param {any} type GET or POST
+     * @param {any} url 傳送位址
+     * @param {any} dataType 傳送資料格式
+     * @param {any} data 需傳送資料
+     * @param {any} fun 完成呼叫Function
+     * @param {any} errorFun 失敗呼叫Function
+     */
+    CallAjaxFun: function (type, url, dataType, data, fun, errorFun = null) {
+        $('.loadingBar').show();
+        $.ajax({
+            type: type,
+            url: url,
+            dataType: dataType,
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            headers: { "X-CSRF-TOKEN": $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                $('.loadingBar').hide();
+                console.log(response);
+                if (!response.success) {
+                    SweetAlert.SwalAlert(response.msg, errorFun);
+                } else {
+                    if (fun != null) fun(response);
+                }
+            },
+            error: function (thrownError) {
+                $('.loadingBar').hide();
+                console.log(thrownError);
+                console.log(thrownError.responseJSON.msg);
+                SweetAlert.SwalAlert('系統有誤,請聯絡系統管理者<br>電話:(02)6630-9988 #163<br>信箱:jasmine670103@eri.com.tw<br>錯誤編號:' + thrownError.responseJSON.data);
+            }
+        });
+    },
+    /**
+     * 共用FormData型態Ajax
+     * @param {any} type GET or POST
+     * @param {any} url 傳送位址
+     * @param {any} dataType 傳送資料格式
+     * @param {any} data 需傳送資料
+     * @param {any} fun 完成呼叫Function
+     * @param {any} errorFun 失敗呼叫Function
+     */
+    CallAjaxFormDataFun: function (type, url, dataType, data, fun, errorFun = null) {
+        $('.loadingBar').show();
+        $.ajax({
+            type: type,
+            url: url,
+            dataType: dataType,
+            data: data,
+            processData: false,
+            contentType: false,
+            headers: { "X-CSRF-TOKEN": $("input[name='__RequestVerificationToken']").val() },
+            success: function (response) {
+                $('.loadingBar').hide();
+                console.log(response);
+                if (!response.success) {
+                    SweetAlert.SwalAlert(response.msg, errorFun);
+                } else {
+                    if (fun != null) fun(response);
+                }
+            },
+            error: function (thrownError) {
+                $('.loadingBar').hide();
+                console.log(thrownError);
+                console.log(thrownError.responseJSON.msg);
+                SweetAlert.SwalAlert('系統有誤,請聯絡系統管理者<br>電話:(02)6630-9988 #163<br>信箱:jasmine670103@eri.com.tw<br>錯誤編號:' + thrownError.responseJSON.data);
+            }
+        });
+    },
+    /**
+     * 產出頁碼
+     * @param {any} currentPage 當前頁碼
+     * @param {any} totalPage 所有筆數
+     * @param {any} offset 一頁幾筆資料
+     */
+    BulidPageBar: function (currentPage, totalPage, offset) {
+        // 每次最多顯示7個頁碼
+        var c = currentPage
+        var t = Math.ceil(totalPage / offset);
+        var p = []
+        for (var i = 1; i <= t; i++) {
+            p.push(i)
+        }
+        var l = p.length
+        if (l <= 7) { // 總頁數<=7，顯示全部頁碼
+            return p
+        } else if (l > 7 && c <= 4) { // 總頁數>7 && 當前頁面<=5
+            return [1, 2, 3, 4, 5, 6, '...', t]
+        } else if (l > 7 && c > 4 && c <= l - 3) { // 總頁數 > 5 && 當前頁面 > 3 && 當前頁 < 總頁數 - 3
+            return [1, '...', c - 2, c - 1, c, c + 1, c + 2, '...', t]
+        } else { // 總頁數 > 5 && 當前頁面 > 3 && 當前頁 > 總頁數 - 3
+            return [1, '...', t - 5, t - 4, t - 3, t - 2, t - 1, t]
+        }
+    }
+}
+
+// 畫面移動元件
+var ScreenMove = {
+    /**
+     * 置頂
+     * */
+    Top: function () {
+        $('html,body').animate({ // 有些瀏覽器只支援html，有些只支援body 所以兩個都寫進去
+            scrollTop: 0,
+        }, 700)
+    },
+    /**
+     * 置底
+     * */
+    Down: function () {
+        $('html,body').animate({ scrollTop: document.body.scrollHeight }, "fast");
+    }
+}
+
+var VerificationFile = {
+    /**
+     * 驗證檔案大小
+     * @param {any} file <inpu type="file">
+     * @param {any} maxSize 檔案大小限制(mb)
+     */
+    verificationFileSize: function (file, maxSize = 20) {
+        var fileSize = 0;
+        //var fileMaxSize = 5120;//5M
+        var fileMaxSize = maxSize * 1024;//5M
+        var filePath = file.value;
+        if (filePath) {
+            fileSize = file.files[0].size;
+            var size = fileSize / 1024;
+            if (size > fileMaxSize) {
+                SweetAlert.SwalAlert("檔案大小不能大於" + maxSize + "MB！");
+                file.value = "";
+                return false;
+            }
+            if (size <= 0) {
+                SweetAlert.SwalAlert("檔案大小不能為0！");
+                file.value = "";
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+        return true;
+    },
+    /**
+     * 驗證檔名長度
+     * @param {any} file <inpu type="file">
+     */
+    verificationFileName: function (file) {
+        var filePath = file.value;
+        if (filePath) {
+            var filePathArray = new Array();
+            filePathArray = filePath.split("\\");
+            var fileName = filePathArray[filePathArray.length - 1];
+            var fileNameLength = fileName.length;
+            //var extensionPath = fileName.split(".");
+            //var extensionPathLength = extensionPath[extensionPath.length - 1].length;
+
+            //if (fileNameLength - extensionPathLength <= 20) {
+            //    return true;
+            //}
+            if (fileNameLength <= 50) {
+                return true;
+            }
+            else {
+                SweetAlert.SwalAlert("檔案名稱過長(50字數內) 上傳失敗！");
+                file.value = "";
+                return false;
+            }
+        }
+    },
+}
+
+var VerificationMultipleFile = {
+    /**
+    * 驗證多個檔案大小
+    * @param {any} file <inpu type="file">
+    * @param {any} maxSize 檔案大小限制(mb)
+    */
+    verificationMultipleFileSize: function (file, maxSize = 10) {
+        var fileSize = 0;
+        var fileMaxSize = maxSize * 1024;
+        var filePath = file.value;
+        if (filePath) {
+            for (var i = 0; i < file.files.length; i++) {
+                fileSize = file.files[i].size;
+                var size = fileSize / 1024;
+                if (size > fileMaxSize) {
+                    SweetAlert.SwalAlert("單個檔案大小不能大於" + maxSize + "MB！");
+                    file.value = "";
+                    return false;
+                }
+                if (size <= 0) {
+                    SweetAlert.SwalAlert("檔案大小不能為0！");
+                    file.value = "";
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+        return true;
+    },
+}

@@ -1,0 +1,4 @@
+﻿function page(p) {
+    var url = location.href.replace(/[?&]{1}page=[^&;]*/, '');
+    location.href = url + (url.indexOf('?') !== -1 ? "&" : "?") + "page=" + p;
+}

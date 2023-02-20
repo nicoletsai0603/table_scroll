@@ -1,0 +1,86 @@
+@charset "utf-8";
+
+/* CSS Document */
+
+html.sidebar-light:not(.dark) ul.nav-main li .nav-children li a:hover,
+html.sidebar-light:not(.dark) ul.nav-main li .nav-children li a:focus {
+    border: none;
+    background: #799733;
+    border-bottom: #fff 1px solid;
+}
+
+html.sidebar-light:not(.dark) ul.nav-main li a {
+    color: #fff;
+}
+
+
+/* 第一層 */
+
+html.sidebar-light:not(.dark) ul.nav-main>li>a {
+    background-color: #6a9ab7;
+    border-bottom: #fff 1px solid;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+html.sidebar-light:not(.dark) ul.nav-main>li>a:hover,
+html.sidebar-light:not(.dark) ul.nav-main>li>a:focus {
+    background-color: #176b9e;
+}
+
+html.sidebar-light:not(.dark) ul.nav-main>li.nav-expanded>a {
+    background: #176b9e;
+}
+
+ul.nav-main li.nav-parent>a:after {
+    color: #fff;
+}
+
+ul.nav-main li .nav-children {
+    padding: 0;
+}
+
+ul.nav-main li .nav-children li a {
+    padding: 10px 15px 10px 57px;
+    background-color: #EBEBEB;
+    border: none;
+    border-bottom: #fff 1px solid;
+}
+
+
+/* 第二層 */
+
+html.sidebar-light ul.nav-main li .nav-children li a {
+    background: #a2c64d;
+    color: #FFF;
+    border: none;
+    border-bottom: #fff 1px solid;
+}
+
+html.sidebar-light ul.nav-main li .nav-children li a::after {
+    top: 7px;
+    color: #FFF;
+}
+
+html.sidebar-light ul.nav-main li .nav-children li a:hover {
+    border-bottom: #fff 1px solid;
+    background: #9bc143;
+}
+
+
+}
+html.sidebar-light:not(.dark) ul.nav-main li .nav-children li a:hover,
+html.sidebar-light:not(.dark) ul.nav-main li .nav-children li a:focus {
+    background: #9bc143;
+    border-bottom: #fff 1px solid;
+}
+
+/* 第三層 */
+ul.nav-main li.nav-parent.nav-expanded>ul.nav.nav-children li>ul.nav.nav-children li a {
+    background: #fff9c1;
+    color: #666;
+    border-bottom: #fff 1px solid;
+}
+ul.nav-main li.nav-parent.nav-expanded>ul.nav.nav-children li>ul.nav.nav-children li a:hover {
+    background: #fff7a3;
+}
